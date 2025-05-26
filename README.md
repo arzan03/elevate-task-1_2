@@ -4,7 +4,19 @@ This project demonstrates how to set up a CI/CD pipeline using GitHub Actions to
 
 ## Steps to Achieve the Task
 
-### 1. **Dockerfile Creation**
+### 1. **Application Setup**
+   - A simple Node.js application was created using Express.
+   - The application has a single endpoint (`GET /`) that returns `Hello, World!`.
+
+### 2. **Testing**
+   - A test suite was added using Jest and Supertest.
+   - The test verifies that the `GET /` endpoint returns the expected response.
+   - To run the tests locally, use the command:
+     ```bash
+     npm test
+     ```
+
+### 3. **Dockerfile Creation**
    - A `Dockerfile` was created to containerize the Node.js application.
    - The `Dockerfile` specifies:
      - The base image (`node:16`).
@@ -14,11 +26,11 @@ This project demonstrates how to set up a CI/CD pipeline using GitHub Actions to
      - Exposing port `3000` for the app.
      - Starting the app with `npm start`.
 
-### 2. **GitHub Actions Workflow**
+### 4. **GitHub Actions Workflow**
    - A GitHub Actions workflow file (`.github/workflows/main.yml`) was created to define the CI/CD pipeline.
    - The pipeline is triggered on every push to the `main` branch.
 
-### 3. **Pipeline Configuration**
+### 5. **Pipeline Configuration**
    - The pipeline consists of the following steps:
      1. **Checkout Code**: Uses the `actions/checkout@v3` action to fetch the repository code.
      2. **Set Up Node.js**: Uses the `actions/setup-node@v3` action to set up Node.js version `16`.
@@ -26,25 +38,27 @@ This project demonstrates how to set up a CI/CD pipeline using GitHub Actions to
      4. **Log in to DockerHub**: Uses the `docker/login-action@v2` action to authenticate with DockerHub using credentials stored in GitHub Secrets (`DOCKER_USERNAME` and `DOCKER_PASSWORD`).
      5. **Build and Push Docker Image**: Builds a Docker image using the `docker build` command and pushes it to DockerHub using the `docker push` command.
 
-### 4. **GitHub Secrets**
+### 6. **GitHub Secrets**
    - DockerHub credentials were stored as GitHub Secrets:
      - `DOCKER_USERNAME`: Your DockerHub username.
      - `DOCKER_PASSWORD`: Your DockerHub password.
 
-### 5. **Testing**
-   - The pipeline ensures that the application is tested before deployment. The `npm test` command runs the test suite defined in the `package.json` file.
-
-### 6. **Deployment**
+### 7. **Deployment**
    - The Docker image is built and tagged as `<DOCKER_USERNAME>/node-app:latest`.
    - The image is pushed to DockerHub, making it available for deployment.
 
 ## File Structure
 ```
 /Users/arzan03/elevate/task1/
+├── app.js
+├── server.js
+├── test/
+│   └── app.test.js
 ├── Dockerfile
 ├── .github/
 │   └── workflows/
 │       └── main.yml
+├── package.json
 └── README.md
 ```
 

@@ -1,14 +1,20 @@
 # CI/CD Pipeline for Node.js Web App
 
+This project demonstrates how to set up CI/CD pipelines using GitHub Actions and Jenkins to automate the deployment of a Node.js web application.
+
+---
+
+## Task 1: GitHub Actions CI/CD Pipeline
+
 This project demonstrates how to set up a CI/CD pipeline using GitHub Actions to automate the deployment of a Node.js web application. The pipeline builds, tests, and deploys the application as a Docker image to DockerHub.
 
-## Steps to Achieve the Task
+### Steps to Achieve the Task
 
-### 1. **Application Setup**
+#### 1. **Application Setup**
    - A simple Node.js application was created using Express.
    - The application has a single endpoint (`GET /`) that returns `Hello, World!`.
 
-### 2. **Testing**
+#### 2. **Testing**
    - A test suite was added using Jest and Supertest.
    - The test verifies that the `GET /` endpoint returns the expected response.
    - To run the tests locally, use the command:
@@ -16,7 +22,7 @@ This project demonstrates how to set up a CI/CD pipeline using GitHub Actions to
      npm test
      ```
 
-### 3. **Dockerfile Creation**
+#### 3. **Dockerfile Creation**
    - A `Dockerfile` was created to containerize the Node.js application.
    - The `Dockerfile` specifies:
      - The base image (`node:16`).
@@ -26,11 +32,11 @@ This project demonstrates how to set up a CI/CD pipeline using GitHub Actions to
      - Exposing port `3000` for the app.
      - Starting the app with `npm start`.
 
-### 4. **GitHub Actions Workflow**
+#### 4. **GitHub Actions Workflow**
    - A GitHub Actions workflow file (`.github/workflows/main.yml`) was created to define the CI/CD pipeline.
    - The pipeline is triggered on every push to the `main` branch.
 
-### 5. **Pipeline Configuration**
+#### 5. **Pipeline Configuration**
    - The pipeline consists of the following steps:
      1. **Checkout Code**: Uses the `actions/checkout@v3` action to fetch the repository code.
      2. **Set Up Node.js**: Uses the `actions/setup-node@v3` action to set up Node.js version `16`.
@@ -38,14 +44,72 @@ This project demonstrates how to set up a CI/CD pipeline using GitHub Actions to
      4. **Log in to DockerHub**: Uses the `docker/login-action@v2` action to authenticate with DockerHub using credentials stored in GitHub Secrets (`DOCKER_USERNAME` and `DOCKER_PASSWORD`).
      5. **Build and Push Docker Image**: Builds a Docker image using the `docker build` command and pushes it to DockerHub using the `docker push` command.
 
-### 6. **GitHub Secrets**
+#### 6. **GitHub Secrets**
    - DockerHub credentials were stored as GitHub Secrets:
      - `DOCKER_USERNAME`: Your DockerHub username.
      - `DOCKER_PASSWORD`: Your DockerHub password.
 
-### 7. **Deployment**
+#### 7. **Deployment**
    - The Docker image is built and tagged as `<DOCKER_USERNAME>/node-app:latest`.
    - The image is pushed to DockerHub, making it available for deployment.
+
+---
+
+## Task 2: Jenkins CI/CD Pipeline
+
+This section explains how to set up a Jenkins pipeline to automate the process of building, testing, and deploying the Node.js application.
+
+### 1. **Jenkins Setup Using Docker**
+   - Run Jenkins in a Docker container:
+     ```bash
+     docker run -d --name jenkins -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts
+     ```
+   - Access Jenkins at `http://localhost:8080`.
+   - Follow the on-screen instructions to unlock Jenkins using the initial admin password:
+     ```bash
+     docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+     ```
+   - Install the recommended plugins during the setup process.
+
+### 2. **Install Required Plugins**
+   - Go to `Manage Jenkins` > `Manage Plugins`.
+   - Install the following plugins:
+     - `Pipeline`
+     - `Docker Pipeline`
+     - `Credentials Binding`
+
+### 3. **Configure DockerHub Credentials**
+   - Go to `Manage Jenkins` > `Manage Credentials`.
+   - Add two credentials:
+     1. **DockerHub Username**:
+        - ID: `docker-username`
+        - Username: Your DockerHub username
+        - Password: Your DockerHub password
+     2. **DockerHub Password**:
+        - ID: `docker-password`
+        - Same as above.
+
+### 4. **Add Jenkinsfile to Repository**
+   - Add the `Jenkinsfile` to the root of your project repository. The `Jenkinsfile` defines the pipeline stages for building, testing, and deploying the application.
+
+### 5. **Set Up a Jenkins Pipeline Job**
+   - Create a new pipeline job in Jenkins:
+     1. Go to `New Item` > Enter a name > Select `Pipeline`.
+     2. Under `Pipeline` > `Definition`, select `Pipeline script from SCM`.
+     3. Configure the repository URL and branch containing the `Jenkinsfile`.
+
+### 6. **Pipeline Stages**
+   - The pipeline consists of the following stages:
+     1. **Checkout Code**: Pulls the latest code from the repository.
+     2. **Install Dependencies and Test**: Installs dependencies using `npm install` and runs tests using `npm test`.
+     3. **Build Docker Image**: Builds a Docker image for the application using the `Dockerfile`.
+     4. **Push Docker Image**: Logs in to DockerHub and pushes the Docker image.
+
+### 7. **Test the Pipeline**
+   - Push changes to the repository to trigger the pipeline.
+   - Monitor the Jenkins dashboard to ensure the pipeline runs successfully.
+
+---
 
 ## File Structure
 ```
@@ -58,16 +122,16 @@ This project demonstrates how to set up a CI/CD pipeline using GitHub Actions to
 ├── .github/
 │   └── workflows/
 │       └── main.yml
+├── Jenkinsfile
 ├── package.json
 └── README.md
 ```
 
-## How to Use
-1. Clone this repository to your local machine.
-2. Add your DockerHub credentials (`DOCKER_USERNAME` and `DOCKER_PASSWORD`) as GitHub Secrets.
-3. Push changes to the `main` branch to trigger the pipeline.
-4. Check the Actions tab in your GitHub repository to monitor the pipeline's progress.
-5. Verify the Docker image on DockerHub.
+---
 
 ## Conclusion
-This setup automates the process of building, testing, and deploying a Node.js web application using GitHub Actions and DockerHub. It ensures a streamlined CI/CD process for rapid and reliable deployments.
+This project demonstrates two CI/CD pipelines:
+1. **GitHub Actions**: Automates testing, building, and deploying the application to DockerHub.
+2. **Jenkins**: Provides an alternative CI/CD pipeline with similar functionality, configured using a `Jenkinsfile`.
+
+Both pipelines ensure a streamlined process for rapid and reliable deployments.

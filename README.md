@@ -59,35 +59,62 @@ This project demonstrates how to set up a CI/CD pipeline using GitHub Actions to
 
 This section explains how to set up a Jenkins pipeline to automate the process of building, testing, and deploying the Node.js application.
 
-### 1. **Jenkins Setup Using Docker**
+### 1. **Running Jenkins on an Azure VM**
+   - Launch an Cloud Virtual Machine (VM) with the following specifications:
+     - OS: Ubuntu 20.04 LTS
+     - Minimum 2 vCPUs and 4 GB RAM
+   - SSH into the VM and install Docker:
+     ```bash
+     sudo apt update
+     sudo apt install -y docker.io
+     sudo systemctl start docker
+     sudo systemctl enable docker
+     ```
    - Run Jenkins in a Docker container:
      ```bash
-     docker run -d --name jenkins -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts
+     sudo docker run -d --name jenkins -p 8080:8080 -p 50000:50000 \
+       -v jenkins_home:/var/jenkins_home \
+       -v /var/run/docker.sock:/var/run/docker.sock \
+       jenkins/jenkins:lts
      ```
-   - Access Jenkins at `http://localhost:8080`.
+   - Access Jenkins at `http://<VM_PUBLIC_IP>:8080`.
    - Follow the on-screen instructions to unlock Jenkins using the initial admin password:
      ```bash
-     docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+     sudo docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
      ```
    - Install the recommended plugins during the setup process.
+
+   - Install `npm` and `docker` inside the Jenkins container:
+     ```bash
+     sudo docker exec -it -u 0 jenkins bash
+     apt-get update
+     apt-get install -y npm docker.io
+     usermod -aG docker jenkins
+     exit
+     ```
+
+   **Screenshot Placeholder**: Add a screenshot of the Jenkins dashboard after installation.
 
 ### 2. **Install Required Plugins**
    - Go to `Manage Jenkins` > `Manage Plugins`.
    - Install the following plugins:
      - `Pipeline`
      - `Docker Pipeline`
-     - `Credentials Binding`
+     - `GitHub Integration`
+
+   **Screenshot Placeholder**: Add a screenshot of the installed plugins list.
 
 ### 3. **Configure DockerHub Credentials**
    - Go to `Manage Jenkins` > `Manage Credentials`.
    - Add two credentials:
      1. **DockerHub Username**:
         - ID: `docker-username`
-        - Username: Your DockerHub username
-        - Password: Your DockerHub password
+        - Your DockerHub username
      2. **DockerHub Password**:
         - ID: `docker-password`
-        - Same as above.
+        - Your DockerHub password
+
+   **Screenshot Placeholder**: Add a screenshot of the credentials configuration page.
 
 ### 4. **Add Jenkinsfile to Repository**
    - Add the `Jenkinsfile` to the root of your project repository. The `Jenkinsfile` defines the pipeline stages for building, testing, and deploying the application.
@@ -98,16 +125,36 @@ This section explains how to set up a Jenkins pipeline to automate the process o
      2. Under `Pipeline` > `Definition`, select `Pipeline script from SCM`.
      3. Configure the repository URL and branch containing the `Jenkinsfile`.
 
-### 6. **Pipeline Stages**
+   **Screenshot Placeholder**: Add a screenshot of the pipeline job configuration page.
+
+### 6. **Configure Jenkins to Detect GitHub Changes**
+   - Go to your GitHub repository and navigate to `Settings` > `Webhooks`.
+   - Add a new webhook with the following details:
+     - **Payload URL**: `http://<VM_PUBLIC_IP>:8080/github-webhook/`
+     - **Content type**: `application/json`
+     - **Events**: Select "Just the push event."
+   - Save the webhook.
+
+   **Screenshot Placeholder**: Add a screenshot of the GitHub webhook configuration page.
+
+   - In Jenkins, go to `Manage Jenkins` > `Configure System`.
+   - Scroll to the "GitHub" section and add your GitHub server details.
+   - Test the connection to ensure Jenkins can communicate with GitHub.
+
+   **Screenshot Placeholder**: Add a screenshot of the GitHub server configuration in Jenkins.
+
+### 7. **Pipeline Stages**
    - The pipeline consists of the following stages:
      1. **Checkout Code**: Pulls the latest code from the repository.
      2. **Install Dependencies and Test**: Installs dependencies using `npm install` and runs tests using `npm test`.
      3. **Build Docker Image**: Builds a Docker image for the application using the `Dockerfile`.
      4. **Push Docker Image**: Logs in to DockerHub and pushes the Docker image.
 
-### 7. **Test the Pipeline**
+### 8. **Test the Pipeline**
    - Push changes to the repository to trigger the pipeline.
    - Monitor the Jenkins dashboard to ensure the pipeline runs successfully.
+
+   **Screenshot Placeholder**: Add a screenshot of a successful pipeline run in Jenkins.
 
 ---
 

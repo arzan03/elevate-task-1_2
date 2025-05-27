@@ -61,7 +61,7 @@ This section explains how to set up a Jenkins pipeline to automate the process o
 
 ### 1. **Running Jenkins on an Azure VM**
    - Launch an Cloud Virtual Machine (VM) with the following specifications:
-     - OS: Ubuntu 20.04 LTS
+     - OS: Ubuntu 24.04 LTS
      - Minimum 2 vCPUs and 4 GB RAM
    - SSH into the VM and install Docker:
      ```bash
@@ -93,7 +93,7 @@ This section explains how to set up a Jenkins pipeline to automate the process o
      exit
      ```
 
-   **Screenshot Placeholder**: Add a screenshot of the Jenkins dashboard after installation.
+   ![Jenkins Dashboard](misc/a.png)
 
 ### 2. **Install Required Plugins**
    - Go to `Manage Jenkins` > `Manage Plugins`.
@@ -102,7 +102,7 @@ This section explains how to set up a Jenkins pipeline to automate the process o
      - `Docker Pipeline`
      - `GitHub Integration`
 
-   **Screenshot Placeholder**: Add a screenshot of the installed plugins list.
+   ![Installed Plugins](misc/b.png)
 
 ### 3. **Configure DockerHub Credentials**
    - Go to `Manage Jenkins` > `Manage Credentials`.
@@ -114,8 +114,6 @@ This section explains how to set up a Jenkins pipeline to automate the process o
         - ID: `docker-password`
         - Your DockerHub password
 
-   **Screenshot Placeholder**: Add a screenshot of the credentials configuration page.
-
 ### 4. **Add Jenkinsfile to Repository**
    - Add the `Jenkinsfile` to the root of your project repository. The `Jenkinsfile` defines the pipeline stages for building, testing, and deploying the application.
 
@@ -125,7 +123,7 @@ This section explains how to set up a Jenkins pipeline to automate the process o
      2. Under `Pipeline` > `Definition`, select `Pipeline script from SCM`.
      3. Configure the repository URL and branch containing the `Jenkinsfile`.
 
-   **Screenshot Placeholder**: Add a screenshot of the pipeline job configuration page.
+   ![Pipeline Job Configuration](misc/c.png)
 
 ### 6. **Configure Jenkins to Detect GitHub Changes**
    - Go to your GitHub repository and navigate to `Settings` > `Webhooks`.
@@ -135,13 +133,7 @@ This section explains how to set up a Jenkins pipeline to automate the process o
      - **Events**: Select "Just the push event."
    - Save the webhook.
 
-   **Screenshot Placeholder**: Add a screenshot of the GitHub webhook configuration page.
-
-   - In Jenkins, go to `Manage Jenkins` > `Configure System`.
-   - Scroll to the "GitHub" section and add your GitHub server details.
-   - Test the connection to ensure Jenkins can communicate with GitHub.
-
-   **Screenshot Placeholder**: Add a screenshot of the GitHub server configuration in Jenkins.
+   ![GitHub Webhook Configuration](misc/d.png)
 
 ### 7. **Pipeline Stages**
    - The pipeline consists of the following stages:
@@ -154,7 +146,7 @@ This section explains how to set up a Jenkins pipeline to automate the process o
    - Push changes to the repository to trigger the pipeline.
    - Monitor the Jenkins dashboard to ensure the pipeline runs successfully.
 
-   **Screenshot Placeholder**: Add a screenshot of a successful pipeline run in Jenkins.
+   ![Successful Pipeline Run](misc/e.png)
 
 ---
 
